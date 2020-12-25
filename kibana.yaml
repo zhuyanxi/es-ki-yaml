@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    workload.user.cattle.io/workloadselector: deployment-es-cluster-kibana
+  name: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: deployment-es-cluster-kibana
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: deployment-es-cluster-kibana
+    spec:
+      containers:
+      - name: kibana
+        # env:
+        # - name: elasticsearch.url
+        #   value: http://10.136.176.72:31594/
+        image: kibana:5.6
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5601
+          name: 5601tcp01
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 2Gi
+        volumeMounts:
+        - mountPath: /etc/kibana
+          name: vol1
+      volumes:
+      - configMap:
+          items:
+          - key: kibana.yml
+            path: kibana.yml
+          name: kibana-config
+          optional: false
+        name: vol1

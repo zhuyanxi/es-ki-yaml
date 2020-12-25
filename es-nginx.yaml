@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    workload.user.cattle.io/workloadselector: deployment-es-cluster-es-nginx
+  name: es-nginx
+spec:
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: deployment-es-cluster-es-nginx
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: deployment-es-cluster-es-nginx
+    spec:
+      containers:
+      - image: nginx
+        name: es-nginx
+        ports:
+        - containerPort: 80
+          name: http
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/nginx
+          name: vol1
+      volumes:
+      - configMap:
+          items:
+          - key: nginx.conf
+            path: nginx.conf
+          name: es-nginx
+          optional: false
+        name: vol1

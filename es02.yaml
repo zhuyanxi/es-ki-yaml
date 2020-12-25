@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    workload.user.cattle.io/workloadselector: deployment-es-cluster-es02
+  name: es02
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: deployment-es-cluster-es02
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: deployment-es-cluster-es02
+    spec:
+      containers:
+      - env:
+        - name: ES_JAVA_OPTS
+          value: -Xms1g -Xmx1g
+        - name: cluster.name
+          value: sr-es-cluster
+        - name: discovery.seed_hosts
+          value: es01
+        - name: node.name
+          value: es02
+        image: elasticsearch:5.6
+        imagePullPolicy: IfNotPresent
+        name: es02
+        ports:
+        - containerPort: 9200
+          name: http
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 2Gi
